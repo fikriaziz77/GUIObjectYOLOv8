@@ -1,44 +1,47 @@
 from PyQt5 import uic
-from PyQt5.QtMultimedia import QCameraInfo
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMenuBar
-from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, QTimer, QDateTime, Qt
-from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen
-import cv2,time,sys,system_info
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
+from PyQt5.QtCore import QThread, pyqtSignal, QTimer, QDateTime
+from PyQt5.QtGui import QImage, QPixmap
+import cv2,time,system_info, rand_num
 import numpy as np
-import random as rnd
 import serial
 import serial.tools.list_ports as list_ports
 
+global objpos 
+objpos = [0,0]
+
 class ThreadClass(QThread):
     ImageUpdate = pyqtSignal(np.ndarray)
-    FPS = pyqtSignal(int)
-    global camIndex
-
-    def run(self):
-        Capture = cv2.VideoCapture(camIndex)
-        Capture.set(cv2.CAP_PROP_FRAME_HEIGHT,480)
-        Capture.set(cv2.CAP_PROP_FRAME_WIDTH,640)
-        
-        self.ThreadActive = True
-        prev_frame_time = 0
-        new_frame_time = 0
-        while self.ThreadActive:
-            #fps camera
-            ret,frame_cap = Capture.read()
-            flip_frame = cv2.flip(src=frame_cap,flipCode=1)
-            new_frame_time = time.time()
-            fps = 1/(new_frame_time-prev_frame_time)
-            prev_frame_time = new_frame_time
-            if ret:
-                self.ImageUpdate.emit(flip_frame)
-                self.FPS.emit(fps)
+    loop = True
     
-    def stop(self):
-        self.ThreadActive = False
-        fps = 0
-        self.FPS.emit(fps)
-        self.quit()
+    def loc2pix(self, x,y):
+        xx = (9*x)+360
+        yy = (-10*y)+200
+        return [xx,yy]
+    
+    def run(self):
+        while self.loop:
+            frame = cv2.imread('assets/background.png')
+            frame = cv2.resize(frame, (720,400))
+            
+            global objpos
+            objpos = rand_num.get()
+            robloct = self.loc2pix(0,0)
+            cv2.circle(frame, (robloct[0],robloct[1]), 4, (255,0,255), 4)
+            
+            obloct = self.loc2pix(objpos[0],objpos[1])
+            cv2.circle(frame, (obloct[0],obloct[1]), 4, (0,255,0), 4)
+            self.ImageUpdate.emit(frame)
       
+    def stop(self):
+        self.loop = False
+        
+        frame = cv2.imread('assets/background.png')
+        frame = cv2.resize(frame, (720,400))
+        self.ImageUpdate.emit(frame)
+        self.quit()
+        
+  
 
 class boardInfoClass(QThread):
     cpu = pyqtSignal(float)
@@ -59,15 +62,12 @@ class boardInfoClass(QThread):
         self.ThreadActive = False
         self.quit()
 
+
 class Window_CommSetting(QDialog):
     def __init__(self):
         super().__init__()
         self.ui = uic.loadUi("screens/comm_setting.ui",self)
         
-class Window_No_Camera_Available(QDialog):
-    def __init__(self):
-        super().__init__()
-        self.ui = uic.loadUi("screens/camera.ui",self)
 
 class MainWindow(QMainWindow):
     
@@ -97,18 +97,9 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.ui = uic.loadUi("screens/main_interface.ui",self)
         
-        #setting camera
-        global emptycam
-        self.online_cam = QCameraInfo.availableCameras()
-        self.cam_list.addItems([c.description() for c in self.online_cam])
-        if not self.online_cam:
-            emptycam = True
-        else:
-            emptycam = False
-        self.cam_stop.setEnabled(False)
-        self.cam_start.clicked.connect(self.StartWebCam)
-        self.cam_stop.clicked.connect(self.StopWebcam)
-        self.no_cam_avail = Window_No_Camera_Available()
+        #setting uiplot
+        self.plot_start.clicked.connect(self.StartPlot)
+        self.plot_stop.clicked.connect(self.StopPlot)
 
         #manual button
         self.hide_manual_button()
@@ -139,7 +130,9 @@ class MainWindow(QMainWindow):
         self.win_showset.comm_status.setPixmap(QPixmap('assets/disconnect.png'))
         self.win_showset.comm_test.clicked.connect(self.SerialCommTest)
         
-    def manualdrive(self, pin):
+        
+        
+    def manualdrive(self):
         if self.cb_manual.isChecked():
             self.show_manual_button()
         else:
@@ -151,52 +144,25 @@ class MainWindow(QMainWindow):
     def SerialCommTest(self):
         self.win_showset.comm_status.setPixmap(QPixmap('assets/connect.png'))  
         
-    def StartWebCam(self,pin):
-        try:
-            global emptycam
-            if emptycam == False:
-                self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Camera ({self.cam_list.currentText()}) Start")
-                self.cam_stop.setEnabled(True)
-                self.cam_start.setEnabled(False)
+    def StartPlot(self):
+        #self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Camera ({self.cam_list.currentText()}) Start")
+        # Opencv QThread
+        self.Opencv = ThreadClass()
+        self.Opencv.ImageUpdate.connect(self.opencv_emit)
+        self.Opencv.start()
+        self.plot_start.setEnabled(False)
 
-                global camIndex
-                camIndex = self.cam_list.currentIndex()
-                
-                # Opencv QThread
-                self.Opencv = ThreadClass()
-                self.Opencv.ImageUpdate.connect(self.opencv_emit)
-                self.Opencv.FPS.connect(self.get_FPS)
-                self.Opencv.start()
-            else :
-                self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Can`t find camera device !")
-                self.no_cam_avail.show()
-                
-        except Exception as error :
-            pass
-
-    
-    def StopWebcam(self,pin):
+    def StopPlot(self):
         
-        import time
-        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Camera ({self.cam_list.currentText()}) Stopped")
-        self.cam_start.setEnabled(True)
-        self.cam_stop.setEnabled(False)
         self.Opencv.stop()
-
-        # Set Icon back to stop state
-        self.cam_view.setPixmap(QPixmap('assets/nocamera.jpg'))
-        self.cam_view.setScaledContents(True)
+        #self.cam_view.setPixmap(QPixmap('assets/background.png'))
+        self.plot_start.setEnabled(True)
         
-
-
-
     def opencv_emit(self, Image):
 
         #QPixmap format           
         original = self.cvt_cv_qt(Image)
-
         self.cam_view.setPixmap(original)
-        self.cam_view.setScaledContents(True)
 
     def cvt_cv_qt(self, Image):
         offset = 5
@@ -244,6 +210,13 @@ class MainWindow(QMainWindow):
         self.DateTime = QDateTime.currentDateTime()
         self.clock.setText(self.DateTime.toString('hh:mm:ss'))
         self.date.setText(self.DateTime.toString('dd MMM yyyy'))
+        
+        global objpos
+        self.ob_x.setText(str(objpos[0]))
+        self.ob_y.setText(str(objpos[1]))
+        
+    def getObj_pos(self):
+        pass
     
 if __name__ == "__main__":
     app = QApplication([])

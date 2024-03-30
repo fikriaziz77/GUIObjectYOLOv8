@@ -32,10 +32,10 @@
    <widget class="QLabel" name="cam_view">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>70</y>
-      <width>741</width>
-      <height>411</height>
+      <width>720</width>
+      <height>400</height>
      </rect>
     </property>
     <property name="font">
@@ -53,14 +53,20 @@ background-color: rgb(170, 170, 127);
 
 }</string>
     </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
     <property name="text">
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>../assets/nocamera.jpg</pixmap>
+     <pixmap>../assets/background.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
+    </property>
+    <property name="margin">
+     <number>0</number>
     </property>
    </widget>
    <widget class="Line" name="line_2">
@@ -81,48 +87,13 @@ background-color: rgb(170, 170, 127);
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>581</width>
+      <width>371</width>
       <height>41</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLabel" name="label_11">
-       <property name="font">
-        <font>
-         <family>Manjari</family>
-         <pointsize>15</pointsize>
-         <weight>50</weight>
-         <italic>false</italic>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
-       </property>
-       <property name="text">
-        <string>Camera : </string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="cam_list"/>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="cam_start">
+      <widget class="QPushButton" name="plot_start">
        <property name="styleSheet">
         <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
        </property>
@@ -151,7 +122,10 @@ background-color: rgb(170, 170, 127);
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="cam_stop">
+      <widget class="QPushButton" name="plot_stop">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="styleSheet">
         <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
        </property>
@@ -485,7 +459,7 @@ background-color: rgb(170, 170, 127);
         <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
        </property>
        <property name="text">
-        <string>Robot Location : </string>
+        <string>Delta Robot Coordinate : </string>
        </property>
       </widget>
      </item>
@@ -820,7 +794,7 @@ background-color: rgb(170, 170, 127);
         <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
        </property>
        <property name="text">
-        <string>Object Location :  </string>
+        <string>Object Coordinate :  </string>
        </property>
       </widget>
      </item>
@@ -1248,7 +1222,7 @@ background-color: rgb(170, 170, 127);
      <x>0</x>
      <y>0</y>
      <width>1271</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuCommunication_Settings">

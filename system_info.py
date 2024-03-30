@@ -8,12 +8,11 @@ def getRAM():
     return psutil.virtual_memory()
 
 def getTemp():
-   # temps = psutil.sensors_temperatures()
-    #for name, entries in temps.items():
-      #  for entry in entries:
-        #    line = entry.current
-            
-            line = 1.1
-            return line
+    temps = psutil.sensors_temperatures()
+    for name, entries in temps.items():
+        for entry in entries:
+            line = entry.current
+    
+    return line
 
             
