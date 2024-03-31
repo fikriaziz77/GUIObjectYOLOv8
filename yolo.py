@@ -31,6 +31,7 @@ while run_prog:
     ret, frame = cap.read()  
   
     if ret:
+        frame = cv2.resize(frame, (720,400))
         results = model.predict(frame, imgsz=320, conf=0.5, device='0')
         result = results[0]
         box = result.obb

@@ -2,10 +2,15 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 from PyQt5.QtCore import QThread, pyqtSignal, QTimer, QDateTime
 from PyQt5.QtGui import QImage, QPixmap
-import cv2,time,system_info, rand_num
+import cv2,time,system_info, rand_num, math
 import numpy as np
 import serial
 import serial.tools.list_ports as list_ports
+
+from ultralytics import YOLO
+import torch
+torch.cuda.set_device(0)
+
 
 global objpos 
 objpos = [0,0]
@@ -19,18 +24,44 @@ class ThreadClass(QThread):
         yy = (-10*y)+200
         return [xx,yy]
     
+    
     def run(self):
+        cap = cv2.VideoCapture(0)
+        model = YOLO("weights/3000pics - 100x35.pt")
+        
         while self.loop:
+            ret, fr = cap.read()  
+  
+            if ret:
+                fr = cv2.resize(fr,(720,400))
+                results = model.predict(fr, max_det=1, imgsz=320, conf=0.5, device='0')
+                result = results[0]
+                box = result.obb
+                
+                if result:    
+                    cords = box.xywhr[0].tolist()
+                    x = round(cords[0])
+                    y = round(cords[1])
+                    val = cords[4]
+                    r = round(math.degrees(val),2)
+                
+                else:
+                    x = 0
+                    y = 0
+                    r = 0.0
+                
+                global objpos
+                objpos = [x,y]
+            
             frame = cv2.imread('assets/background.png')
             frame = cv2.resize(frame, (720,400))
-            
-            global objpos
-            objpos = rand_num.get()
-            robloct = self.loc2pix(0,0)
-            cv2.circle(frame, (robloct[0],robloct[1]), 4, (255,0,255), 4)
+            print("=========")
+            print(objpos)
+            #robloct = self.loc2pix(0,0)
+            #cv2.circle(frame, (robloct[0],robloct[1]), 4, (255,0,255), 4)
             
             obloct = self.loc2pix(objpos[0],objpos[1])
-            cv2.circle(frame, (obloct[0],obloct[1]), 4, (0,255,0), 4)
+            cv2.circle(frame, (objpos[0],objpos[1]), 4, (0,255,0), 4)
             self.ImageUpdate.emit(frame)
       
     def stop(self):
