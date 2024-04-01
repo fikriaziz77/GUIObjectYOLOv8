@@ -2,7 +2,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 from PyQt5.QtCore import QThread, pyqtSignal, QTimer, QDateTime
 from PyQt5.QtGui import QImage, QPixmap
-import cv2,time,system_info, rand_num, math
+import cv2,time,system_info, math
 import numpy as np
 import serial
 import serial.tools.list_ports as list_ports
@@ -11,19 +11,23 @@ from ultralytics import YOLO
 import torch
 torch.cuda.set_device(0)
 
+global objpos
+objpos = [0,0,0]
 
-global objpos 
-objpos = [0,0]
 
 class ThreadClass(QThread):
     ImageUpdate = pyqtSignal(np.ndarray)
     loop = True
     
-    def loc2pix(self, x,y):
-        xx = (9*x)+360
+    def loc2pix(self, x, y):
+        xx = (9*x)+365
         yy = (-10*y)+200
         return [xx,yy]
     
+    def pix2loc(self, xx, yy):     
+        x = (xx - 365)/9
+        y = (yy - 200)/-10
+        return [x,y]
     
     def run(self):
         cap = cv2.VideoCapture(0)
@@ -33,7 +37,7 @@ class ThreadClass(QThread):
             ret, fr = cap.read()  
   
             if ret:
-                fr = cv2.resize(fr,(720,400))
+                fr = cv2.resize(fr,(730,400))
                 results = model.predict(fr, max_det=1, imgsz=320, conf=0.5, device='0')
                 result = results[0]
                 box = result.obb
@@ -51,28 +55,28 @@ class ThreadClass(QThread):
                     r = 0.0
                 
                 global objpos
-                objpos = [x,y]
+                objpos = [x,y,r]
             
             frame = cv2.imread('assets/background.png')
-            frame = cv2.resize(frame, (720,400))
+            frame = cv2.resize(frame, (730,400))
             print("=========")
             print(objpos)
+            
             #robloct = self.loc2pix(0,0)
             #cv2.circle(frame, (robloct[0],robloct[1]), 4, (255,0,255), 4)
             
-            obloct = self.loc2pix(objpos[0],objpos[1])
-            cv2.circle(frame, (objpos[0],objpos[1]), 4, (0,255,0), 4)
+            #obloct = self.pix2loc(objpos[0],objpos[1])
+            obloct = objpos
+            cv2.circle(frame, (obloct[0],obloct[1]), 4, (0,255,0), 4)
             self.ImageUpdate.emit(frame)
       
     def stop(self):
         self.loop = False
         
         frame = cv2.imread('assets/background.png')
-        frame = cv2.resize(frame, (720,400))
+        frame = cv2.resize(frame, (730,400))
         self.ImageUpdate.emit(frame)
         self.quit()
-        
-  
 
 class boardInfoClass(QThread):
     cpu = pyqtSignal(float)
@@ -161,8 +165,6 @@ class MainWindow(QMainWindow):
         self.win_showset.comm_status.setPixmap(QPixmap('assets/disconnect.png'))
         self.win_showset.comm_test.clicked.connect(self.SerialCommTest)
         
-        
-        
     def manualdrive(self):
         if self.cb_manual.isChecked():
             self.show_manual_button()
@@ -176,18 +178,17 @@ class MainWindow(QMainWindow):
         self.win_showset.comm_status.setPixmap(QPixmap('assets/connect.png'))  
         
     def StartPlot(self):
-        #self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Camera ({self.cam_list.currentText()}) Start")
-        # Opencv QThread
         self.Opencv = ThreadClass()
         self.Opencv.ImageUpdate.connect(self.opencv_emit)
         self.Opencv.start()
         self.plot_start.setEnabled(False)
-
-    def StopPlot(self):
+        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Object Detection Start !")
         
+        
+    def StopPlot(self):
         self.Opencv.stop()
-        #self.cam_view.setPixmap(QPixmap('assets/background.png'))
         self.plot_start.setEnabled(True)
+        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Object Detection Stoped !")
         
     def opencv_emit(self, Image):
 
@@ -223,7 +224,7 @@ class MainWindow(QMainWindow):
         if ram[2] > 85: self.com_ram.setStyleSheet("color: rgb(237, 85, 59);")
     
     def getTemp_usage(self,temp):
-        self.com_temp.setText(str(temp) + "C")
+        self.com_temp.setText(str(temp) + "°C")
         if temp > 30: self.com_temp.setStyleSheet("color: rgb(23, 63, 95);")
         if temp > 35: self.com_temp.setStyleSheet("color: rgb(60, 174, 155);")
         if temp > 40: self.com_temp.setStyleSheet("color: rgb(246,213, 92);")
@@ -245,6 +246,8 @@ class MainWindow(QMainWindow):
         global objpos
         self.ob_x.setText(str(objpos[0]))
         self.ob_y.setText(str(objpos[1]))
+        self.ob_deg.setText(str(objpos[2]))
+        
         
     def getObj_pos(self):
         pass
