@@ -14,6 +14,9 @@ torch.cuda.set_device(0)
 global objpos
 objpos = [0,0,0]
 
+global mul_jog
+mul_jog = 0
+
 
 class ThreadClass(QThread):
     ImageUpdate = pyqtSignal(np.ndarray)
@@ -116,6 +119,12 @@ class MainWindow(QMainWindow):
         self.pb_zplus.setEnabled(True)
         self.pb_yawplus.setEnabled(True)
         self.pb_grip.setEnabled(True)
+        self.slider_jog.setEnabled(True)
+        self.lbl_jog.setEnabled(True)
+        self.plot_start.setEnabled(False)
+        self.plot_stop.setEnabled(False)
+        self.pb_homing.setEnabled(False)
+        
     
     def hide_manual_button(self):
         self.pb_xmin.setEnabled(False)
@@ -127,6 +136,11 @@ class MainWindow(QMainWindow):
         self.pb_zplus.setEnabled(False)
         self.pb_yawplus.setEnabled(False)
         self.pb_grip.setEnabled(False)
+        self.slider_jog.setEnabled(False)
+        self.lbl_jog.setEnabled(False)
+        self.plot_start.setEnabled(True)
+        self.plot_stop.setEnabled(True)
+        self.pb_homing.setEnabled(True)
     
     def __init__(self):
         super().__init__()
@@ -135,10 +149,11 @@ class MainWindow(QMainWindow):
         #setting uiplot
         self.plot_start.clicked.connect(self.StartPlot)
         self.plot_stop.clicked.connect(self.StopPlot)
-
+        
         #manual button
         self.hide_manual_button()
         self.cb_manual.clicked.connect(self.manualdrive)
+        self.slider_jog.valueChanged.connect(self.leveljog)
         
         #resource usage cpu
         self.resource_usage = boardInfoClass()
@@ -157,11 +172,8 @@ class MainWindow(QMainWindow):
         self.win_showset = Window_CommSetting()
         self.win_showset.comm_portlist.addItems([comport.device for comport in list_ports.comports()])
         for x in serial.Serial.BAUDRATES:
-            if (x >= 4800 and x <=115200):
+            if (x >= 9600 and x <=115200):
                 self.win_showset.comm_baudrate.addItems([str(x)])
-        self.win_showset.comm_parity.addItems([x for x in serial.Serial.PARITIES])
-        self.win_showset.comm_bytesz.addItems([str(x) for x in serial.Serial.BYTESIZES])
-        self.win_showset.comm_stopbits.addItems([str(x) for x in serial.Serial.STOPBITS])
         self.win_showset.comm_status.setPixmap(QPixmap('assets/disconnect.png'))
         self.win_showset.comm_test.clicked.connect(self.SerialCommTest)
         
@@ -169,7 +181,23 @@ class MainWindow(QMainWindow):
         if self.cb_manual.isChecked():
             self.show_manual_button()
         else:
-            self.hide_manual_button()    
+            self.hide_manual_button()
+            
+    def leveljog(self):
+        global mul_jog
+        if self.slider_jog.value() == 0:
+            self.lbl_jog.setText("x0")
+            mul_jog = 0
+        elif self.slider_jog.value() == 1:
+            self.lbl_jog.setText("x1")
+            mul_jog = 1
+        elif self.slider_jog.value() == 2:
+            self.lbl_jog.setText("x10")
+            mul_jog = 10
+        elif self.slider_jog.value() == 3:
+            self.lbl_jog.setText("x100")
+            mul_jog = 100
+        
         
     def MenuSerialComm(self):
         self.win_showset.show()
@@ -184,11 +212,16 @@ class MainWindow(QMainWindow):
         self.plot_start.setEnabled(False)
         self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Object Detection Start !")
         
+        self.cb_manual.setEnabled(False)
+        self.pb_homing.setEnabled(False)
         
     def StopPlot(self):
         self.Opencv.stop()
         self.plot_start.setEnabled(True)
         self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Object Detection Stoped !")
+        
+        self.cb_manual.setEnabled(True)
+        self.pb_homing.setEnabled(True)
         
     def opencv_emit(self, Image):
 

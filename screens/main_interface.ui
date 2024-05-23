@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1271</width>
+    <width>1280</width>
     <height>673</height>
    </rect>
   </property>
@@ -28,6 +28,9 @@
   <property name="windowIcon">
    <iconset>
     <normaloff>../assets/iconapps.jpg</normaloff>../assets/iconapps.jpg</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(211, 215, 207);</string>
   </property>
   <property name="tabShape">
    <enum>QTabWidget::Rounded</enum>
@@ -49,7 +52,7 @@
      </font>
     </property>
     <property name="autoFillBackground">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="styleSheet">
      <string notr="true">QLineedit{
@@ -91,7 +94,7 @@ background-color: rgb(170, 170, 127);
      <rect>
       <x>30</x>
       <y>20</y>
-      <width>361</width>
+      <width>331</width>
       <height>41</height>
      </rect>
     </property>
@@ -99,7 +102,8 @@ background-color: rgb(170, 170, 127);
      <item>
       <widget class="QPushButton" name="plot_start">
        <property name="styleSheet">
-        <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+        <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(17, 164, 40);</string>
        </property>
        <property name="text">
         <string>Start</string>
@@ -131,7 +135,8 @@ background-color: rgb(170, 170, 127);
         <bool>true</bool>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+        <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(239, 41, 41);</string>
        </property>
        <property name="text">
         <string>Stop</string>
@@ -154,7 +159,8 @@ background-color: rgb(170, 170, 127);
      <item>
       <widget class="QPushButton" name="cb_manual">
        <property name="styleSheet">
-        <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+        <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(252, 175, 62);</string>
        </property>
        <property name="text">
         <string>Manual Drive</string>
@@ -215,7 +221,8 @@ background-color: rgb(170, 170, 127);
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+          <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(243, 243, 243);</string>
          </property>
          <property name="text">
           <string>0.0 %</string>
@@ -263,7 +270,8 @@ background-color: rgb(170, 170, 127);
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+          <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(243, 243, 243);</string>
          </property>
          <property name="text">
           <string>0.0 %</string>
@@ -311,7 +319,8 @@ background-color: rgb(170, 170, 127);
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+          <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(243, 243, 243);</string>
          </property>
          <property name="text">
           <string>0.0 °C</string>
@@ -412,7 +421,7 @@ background-color: rgb(170, 170, 127);
         <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
        </property>
        <property name="text">
-        <string>Delta Robot Coordinate : </string>
+        <string>Delta Robot Monitoring : </string>
        </property>
       </widget>
      </item>
@@ -978,7 +987,8 @@ background-color: rgb(170, 170, 127);
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 10pt &quot;Manjari&quot;;</string>
+        <string notr="true">font: 10pt &quot;Manjari&quot;;
+background-color: rgb(238, 238, 236);</string>
        </property>
       </widget>
      </item>
@@ -988,31 +998,30 @@ background-color: rgb(170, 170, 127);
     <property name="geometry">
      <rect>
       <x>800</x>
-      <y>110</y>
+      <y>100</y>
       <width>451</width>
-      <height>361</height>
+      <height>381</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+     <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="title">
-     <string>---------- MANUAL DRIVE -----------</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <string>MANUAL JOG ROBOT</string>
     </property>
     <widget class="QPushButton" name="pb_zplus">
      <property name="geometry">
       <rect>
        <x>300</x>
-       <y>40</y>
+       <y>60</y>
        <width>141</width>
        <height>91</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+      <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(211, 215, 207);</string>
      </property>
      <property name="text">
       <string>Z+</string>
@@ -1022,13 +1031,14 @@ background-color: rgb(170, 170, 127);
      <property name="geometry">
       <rect>
        <x>160</x>
-       <y>260</y>
+       <y>280</y>
        <width>131</width>
        <height>91</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+      <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(211, 215, 207);</string>
      </property>
      <property name="text">
       <string>X-</string>
@@ -1038,13 +1048,14 @@ background-color: rgb(170, 170, 127);
      <property name="geometry">
       <rect>
        <x>300</x>
-       <y>260</y>
+       <y>280</y>
        <width>141</width>
        <height>91</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+      <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(211, 215, 207);</string>
      </property>
      <property name="text">
       <string>YAW-</string>
@@ -1054,13 +1065,14 @@ background-color: rgb(170, 170, 127);
      <property name="geometry">
       <rect>
        <x>160</x>
-       <y>150</y>
+       <y>170</y>
        <width>131</width>
        <height>91</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+      <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(211, 215, 207);</string>
      </property>
      <property name="text">
       <string>GRIPPER</string>
@@ -1073,7 +1085,7 @@ background-color: rgb(170, 170, 127);
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>150</y>
+       <y>170</y>
        <width>141</width>
        <height>91</height>
       </rect>
@@ -1091,7 +1103,8 @@ background-color: rgb(170, 170, 127);
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+      <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(211, 215, 207);</string>
      </property>
      <property name="text">
       <string>Y-</string>
@@ -1101,7 +1114,7 @@ background-color: rgb(170, 170, 127);
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>40</y>
+       <y>60</y>
        <width>141</width>
        <height>91</height>
       </rect>
@@ -1116,7 +1129,8 @@ background-color: rgb(170, 170, 127);
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+      <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(211, 215, 207);</string>
      </property>
      <property name="text">
       <string>Z-</string>
@@ -1126,13 +1140,14 @@ background-color: rgb(170, 170, 127);
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>260</y>
+       <y>280</y>
        <width>141</width>
        <height>91</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+      <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(211, 215, 207);</string>
      </property>
      <property name="text">
       <string>YAW+</string>
@@ -1142,13 +1157,14 @@ background-color: rgb(170, 170, 127);
      <property name="geometry">
       <rect>
        <x>160</x>
-       <y>40</y>
+       <y>60</y>
        <width>131</width>
        <height>91</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+      <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(211, 215, 207);</string>
      </property>
      <property name="text">
       <string>X+</string>
@@ -1158,18 +1174,82 @@ background-color: rgb(170, 170, 127);
      <property name="geometry">
       <rect>
        <x>300</x>
-       <y>150</y>
+       <y>170</y>
        <width>141</width>
        <height>91</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+      <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(211, 215, 207);</string>
      </property>
      <property name="text">
       <string>Y+</string>
      </property>
     </widget>
+    <widget class="QSlider" name="slider_jog">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>30</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>3</number>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_jog">
+     <property name="geometry">
+      <rect>
+       <x>390</x>
+       <y>10</y>
+       <width>51</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>x0</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>20</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QPushButton" name="pb_homing">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
+       </property>
+       <property name="text">
+        <string>Homing Robot</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -1177,7 +1257,7 @@ background-color: rgb(170, 170, 127);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1271</width>
+     <width>1280</width>
      <height>22</height>
     </rect>
    </property>

@@ -6,7 +6,8 @@ import torch
 
 torch.cuda.set_device(0)
 cap = cv2.VideoCapture(0)
-
+cap.set(cv2.CAP_PROP_FRAME_WIDTH,1024)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT,576)
 model = YOLO("weights/3000pics - 100x35.pt")
 
 prev_time = 0
@@ -16,7 +17,7 @@ fps = 0
 font = cv2.FONT_HERSHEY_PLAIN
 color = (255,0,0)
 run_prog = True
-
+conf = 0 
 x = 0
 y = 0
 r = 0.0
@@ -31,8 +32,8 @@ while run_prog:
     ret, frame = cap.read()  
   
     if ret:
-        frame = cv2.resize(frame, (720,400))
-        results = model.predict(frame, imgsz=320, conf=0.5, device='0')
+        frame = cv2.resize(frame, (0,0), fx=0.7,fy=0.7)
+        results = model.predict(frame, imgsz=320, conf=0.3, device='0')
         result = results[0]
         box = result.obb
         if result:
@@ -42,13 +43,13 @@ while run_prog:
                 cords_corner = box.xyxyxyxy[0].tolist()
                 conf = round(box.conf[0].item(), 2)
                 
-                px1 = int(cords_corner[0][0])
-                py1 = int(cords_corner[0][1])
-                cv2.circle(frame, (px1,py1), 2, (0,0,255), 2)
+                #px1 = int(cords_corner[0][0])
+                #py1 = int(cords_corner[0][1])
+                #cv2.circle(frame, (px1,py1), 2, (0,0,255), 2)
 
-                px2 = int(cords_corner[1][0])
-                py2 = int(cords_corner[1][1])
-                cv2.circle(frame, (px2,py2), 2, (0,255,0), 2)
+                #px2 = int(cords_corner[1][0])
+                #py2 = int(cords_corner[1][1])
+                #cv2.circle(frame, (700,400), 2, (0,255,0), 2)
 
                 x = round(cords[0])
                 y = round(cords[1])
@@ -61,7 +62,7 @@ while run_prog:
                 box = cv2.boxPoints(rect) 
                 box = np.int0(box)
                 cv2.drawContours(frame,[box],0,color,1)
-                cv2.putText(frame, f"{x},{y},{r}",(2,2), cv2.FONT_HERSHEY_PLAIN, 1, (0,0,0), 2)
+                #cv2.putText(frame, f"{x},{y},{r}",(2,2), cv2.FONT_HERSHEY_PLAIN, 1, (0,0,0), 2)
         else:
             x = 0
             y = 0
@@ -74,9 +75,26 @@ while run_prog:
             frame_count = 0
             prev_time = curr_time
 
-        fps_text = f"FPS: {int(fps)}"
+        fps_text = f"FPS: {round(fps,2)}"
         cv2.putText(frame, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
-
+        
+        conf_text = f"Conf: {conf*100}%"
+        cv2.putText(frame, conf_text, (10, 65), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+        
+        fxy_text = f"Coor Frame: {x},{y}"
+        cv2.putText(frame, fxy_text, (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1)                
+        
+        if x==0 and y==0:
+            rx = x
+            ry = y
+        else:
+            rx = round((0.4325*x)-155,2)
+            ry = round((-0.4464*y)+90,2)
+            
+        
+        rxy_text = f"Coor Frame: {rx},{ry}"
+        cv2.putText(frame, rxy_text, (10, 130), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1)        
+        
         cv2.imshow("Camera FPS", frame)
         
     if cv2.waitKey(1) == ord('q'):
