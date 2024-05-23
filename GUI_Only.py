@@ -13,35 +13,24 @@ torch.cuda.set_device(0)
 
 global objpos
 objpos = [0,0,0]
-
-global mul_jog
-mul_jog = 0
-
-
+ 
 class ThreadClass(QThread):
     ImageUpdate = pyqtSignal(np.ndarray)
     loop = True
     
-    def loc2pix(self, x, y):
-        xx = (9*x)+365
-        yy = (-10*y)+200
-        return [xx,yy]
-    
-    def pix2loc(self, xx, yy):     
-        x = (xx - 365)/9
-        y = (yy - 200)/-10
-        return [x,y]
     
     def run(self):
         cap = cv2.VideoCapture(0)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH,1024)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT,576)
         model = YOLO("weights/3000pics - 100x35.pt")
         
         while self.loop:
             ret, fr = cap.read()  
   
             if ret:
-                fr = cv2.resize(fr,(730,400))
-                results = model.predict(fr, max_det=1, imgsz=320, conf=0.5, device='0')
+                fr = cv2.resize(fr, (0,0), fx=0.7,fy=0.7)
+                results = model.predict(fr, imgsz=320, conf=0.3, device='0')
                 result = results[0]
                 box = result.obb
                 
@@ -65,12 +54,9 @@ class ThreadClass(QThread):
             print("=========")
             print(objpos)
             
-            #robloct = self.loc2pix(0,0)
-            #cv2.circle(frame, (robloct[0],robloct[1]), 4, (255,0,255), 4)
-            
-            #obloct = self.pix2loc(objpos[0],objpos[1])
-            obloct = objpos
-            cv2.circle(frame, (obloct[0],obloct[1]), 4, (0,255,0), 4)
+            guix = round(1.0184*x)
+            guiy = round(0.9921*y)
+            cv2.circle(frame, (guix,guiy), 4, (0,255,0), 4)
             self.ImageUpdate.emit(frame)
       
     def stop(self):
@@ -123,7 +109,7 @@ class MainWindow(QMainWindow):
         self.lbl_jog.setEnabled(True)
         self.plot_start.setEnabled(False)
         self.plot_stop.setEnabled(False)
-        self.pb_homing.setEnabled(False)
+        self.pb_homing.setEnabled(True)
         
     
     def hide_manual_button(self):
@@ -140,7 +126,7 @@ class MainWindow(QMainWindow):
         self.lbl_jog.setEnabled(False)
         self.plot_start.setEnabled(True)
         self.plot_stop.setEnabled(True)
-        self.pb_homing.setEnabled(True)
+        self.pb_homing.setEnabled(False)
     
     def __init__(self):
         super().__init__()
@@ -154,6 +140,7 @@ class MainWindow(QMainWindow):
         self.hide_manual_button()
         self.cb_manual.clicked.connect(self.manualdrive)
         self.slider_jog.valueChanged.connect(self.leveljog)
+        self.pb_grip.clicked.connect(self.man_grip)
         
         #resource usage cpu
         self.resource_usage = boardInfoClass()
@@ -161,6 +148,9 @@ class MainWindow(QMainWindow):
         self.resource_usage.cpu.connect(self.getCPU_usage)
         self.resource_usage.ram.connect(self.getRAM_usage)
         self.resource_usage.temp.connect(self.getTemp_usage)
+        
+        #homingrobot
+        self.pb_homing.clicked.connect(self.sendDataHoming)
 
         #runtime start
         self.lcd_timer = QTimer()
@@ -176,34 +166,65 @@ class MainWindow(QMainWindow):
                 self.win_showset.comm_baudrate.addItems([str(x)])
         self.win_showset.comm_status.setPixmap(QPixmap('assets/disconnect.png'))
         self.win_showset.comm_test.clicked.connect(self.SerialCommTest)
+        self.win_showset.comm_refresh.clicked.connect(self.SerialCommRefresh)
         
     def manualdrive(self):
         if self.cb_manual.isChecked():
             self.show_manual_button()
+            self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Manual Mode Active!")
         else:
             self.hide_manual_button()
+            self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Manual Mode Deactive!")
             
     def leveljog(self):
-        global mul_jog
         if self.slider_jog.value() == 0:
             self.lbl_jog.setText("x0")
-            mul_jog = 0
+            self.mul_jog = 0
         elif self.slider_jog.value() == 1:
             self.lbl_jog.setText("x1")
-            mul_jog = 1
+            self.mul_jog = 1
         elif self.slider_jog.value() == 2:
             self.lbl_jog.setText("x10")
-            mul_jog = 10
+            self.mul_jog = 10
         elif self.slider_jog.value() == 3:
             self.lbl_jog.setText("x100")
-            mul_jog = 100
-        
+            self.mul_jog = 100
+            
+    def man_grip(self):
+        if self.pb_grip.isChecked():
+            grip = 0
+        else:
+            grip = 1
+        data = f"4,{grip}"
+        self.ser.write(data.encode('utf-8')) 
         
     def MenuSerialComm(self):
         self.win_showset.show()
         
+    def sendDataHoming(self):
+        data = "3"
+        self.ser.write(data.encode('utf-8'))
+        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Homing Delta Robot!")
+    
     def SerialCommTest(self):
-        self.win_showset.comm_status.setPixmap(QPixmap('assets/connect.png'))  
+        prt = self.win_showset.comm_portlist.currentText()
+        bdrt = self.win_showset.comm_baudrate.currentText()
+        self.ser = serial.Serial(prt,int(bdrt))
+        self.ser.close()
+        self.ser.open()
+        if self.ser.is_open == True:
+            self.win_showset.comm_status.setPixmap(QPixmap('assets/connect.png'))
+        else:
+            self.win_showset.comm_status.setPixmap(QPixmap('assets/disconnect.png'))
+            
+    def SerialCommRefresh(self):
+        self.win_showset.comm_portlist.clear()
+        self.win_showset.comm_baudrate.clear()
+        self.win_showset.comm_portlist.addItems([comport.device for comport in list_ports.comports()])
+        for x in serial.Serial.BAUDRATES:
+            if (x >= 9600 and x <=115200):
+                self.win_showset.comm_baudrate.addItems([str(x)])
+        self.win_showset.comm_status.setPixmap(QPixmap('assets/disconnect.png'))
         
     def StartPlot(self):
         self.Opencv = ThreadClass()
@@ -277,8 +298,15 @@ class MainWindow(QMainWindow):
         self.date.setText(self.DateTime.toString('dd MMM yyyy'))
         
         global objpos
-        self.ob_x.setText(str(objpos[0]))
-        self.ob_y.setText(str(objpos[1]))
+        if objpos[0]==0 and objpos[1]==0:
+            rx = objpos[0]
+            ry = objpos[1]
+        else:
+            rx = round((0.4325*objpos[0])-155,2)
+            ry = round((-0.4464*objpos[1])+90,2)
+            
+        self.ob_x.setText(str(rx))
+        self.ob_y.setText(str(ry))
         self.ob_deg.setText(str(objpos[2]))
         
         

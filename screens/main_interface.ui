@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>673</height>
+    <height>674</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -834,7 +834,7 @@ background-color: rgb(243, 243, 243);</string>
           <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
          </property>
          <property name="text">
-          <string>Y</string>
+          <string>Y [mm]</string>
          </property>
         </widget>
        </item>
@@ -872,7 +872,7 @@ background-color: rgb(243, 243, 243);</string>
           <string notr="true">font: 15pt &quot;Manjari&quot;;</string>
          </property>
          <property name="text">
-          <string>X</string>
+          <string>X [mm]</string>
          </property>
         </widget>
        </item>
