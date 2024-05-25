@@ -17,7 +17,7 @@ objpos = [0,0,0]
 class ThreadClass(QThread):
     ImageUpdate = pyqtSignal(np.ndarray)
     loop = True
-    
+    status = pyqtSignal(str)
     
     def run(self):
         cap = cv2.VideoCapture(0)
@@ -40,11 +40,13 @@ class ThreadClass(QThread):
                     y = round(cords[1])
                     val = cords[4]
                     r = round(math.degrees(val),2)
-                
+                    status = "background-color: rgb(0,255,0)"
+                    
                 else:
                     x = 0
                     y = 0
                     r = 0.0
+                    status = "background-color: rgb(255,0,0)"
                 
                 global objpos
                 objpos = [x,y,r]
@@ -58,6 +60,8 @@ class ThreadClass(QThread):
             guiy = round(0.9921*y)
             cv2.circle(frame, (guix,guiy), 4, (0,255,0), 4)
             self.ImageUpdate.emit(frame)
+            
+            self.status.emit(status)
       
     def stop(self):
         self.loop = False
@@ -91,6 +95,16 @@ class Window_CommSetting(QDialog):
     def __init__(self):
         super().__init__()
         self.ui = uic.loadUi("screens/comm_setting.ui",self)
+        
+class Window_ComingSoon(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.ui = uic.loadUi("screens/comingsoon.ui",self)
+        
+class Window_About(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.ui = uic.loadUi("screens/about.ui",self)
         
 
 class MainWindow(QMainWindow):
@@ -149,6 +163,10 @@ class MainWindow(QMainWindow):
         self.resource_usage.ram.connect(self.getRAM_usage)
         self.resource_usage.temp.connect(self.getTemp_usage)
         
+        self.getObjStatus = ThreadClass()
+        self.getObjStatus.status.connect(self.getObj_status)
+        
+        
         #homingrobot
         self.pb_homing.clicked.connect(self.sendDataHoming)
 
@@ -167,6 +185,20 @@ class MainWindow(QMainWindow):
         self.win_showset.comm_status.setPixmap(QPixmap('assets/disconnect.png'))
         self.win_showset.comm_test.clicked.connect(self.SerialCommTest)
         self.win_showset.comm_refresh.clicked.connect(self.SerialCommRefresh)
+        
+        #comingsoon menu
+        self.actionNew_GCODE.triggered.connect(self.MenuComingSoon)
+        self.actionOpen_GCODE_2.triggered.connect(self.MenuComingSoon)
+        self.actionSave_GCODE.triggered.connect(self.MenuComingSoon)
+        self.actionSave_As.triggered.connect(self.MenuComingSoon)
+        self.win_comingsoon = Window_ComingSoon()
+        
+        #close menu
+        self.actionExit.triggered.connect(self.MenuExit)
+        
+        #about menu
+        self.actionAbout.triggered.connect(self.MenuAbout)
+        self.win_about = Window_About()
         
     def manualdrive(self):
         if self.cb_manual.isChecked():
@@ -201,6 +233,15 @@ class MainWindow(QMainWindow):
     def MenuSerialComm(self):
         self.win_showset.show()
         
+    def MenuComingSoon(self):
+        self.win_comingsoon.show()
+        
+    def MenuAbout(self):
+        self.win_about.show()
+        
+    def MenuExit(self):
+        quit()
+    
     def sendDataHoming(self):
         data = "3"
         self.ser.write(data.encode('utf-8'))
@@ -231,10 +272,9 @@ class MainWindow(QMainWindow):
         self.Opencv.ImageUpdate.connect(self.opencv_emit)
         self.Opencv.start()
         self.plot_start.setEnabled(False)
-        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Object Detection Start !")
+        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Object Detection Starting, Please wait..")
         
         self.cb_manual.setEnabled(False)
-        self.pb_homing.setEnabled(False)
         
     def StopPlot(self):
         self.Opencv.stop()
@@ -242,8 +282,7 @@ class MainWindow(QMainWindow):
         self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Object Detection Stoped !")
         
         self.cb_manual.setEnabled(True)
-        self.pb_homing.setEnabled(True)
-        
+
     def opencv_emit(self, Image):
 
         #QPixmap format           
@@ -260,7 +299,9 @@ class MainWindow(QMainWindow):
 
         return pixmap #QPixmap.fromImage(cvt2QtFormat)
 #-----
-
+    def getObj_status(self,status):
+        window.stat_obj.setStyleSheet(status)
+    
     def getCPU_usage(self,cpu):
         self.com_cpu.setText(str(cpu) + "%")
         if cpu > 15: self.com_cpu.setStyleSheet("color: rgb(23, 63, 95);")
@@ -268,7 +309,7 @@ class MainWindow(QMainWindow):
         if cpu > 45: self.com_cpu.setStyleSheet("color: rgb(60, 174, 163);")
         if cpu > 65: self.com_cpu.setStyleSheet("color: rgb(246, 213, 92);")
         if cpu > 85: self.com_cpu.setStyleSheet("color: rgb(237, 85, 59);")
-
+       
     def getRAM_usage(self,ram):
         self.com_ram.setText(str(ram[2]) + "%")
         if ram[2] > 15: self.com_ram.setStyleSheet("color: rgb(23, 63, 95);")
@@ -284,13 +325,6 @@ class MainWindow(QMainWindow):
         if temp > 40: self.com_temp.setStyleSheet("color: rgb(246,213, 92);")
         if temp > 45: self.com_temp.setStyleSheet("color: rgb(237, 85, 59);")
         if temp > 50: self.com_temp.setStyleSheet("color: rgb(255, 0, 0);")
-        
-    def get_FPS(self,fps):
-        self.com_fps.setText(str(fps))
-        if fps > 1: self.com_fps.setStyleSheet("color: red;")
-        if fps > 10: self.com_fps.setStyleSheet("color: rgb(245, 170, 62);")
-        if fps > 16: self.com_fps.setStyleSheet("color: green;")
-
 
     def clock_func(self):
         self.DateTime = QDateTime.currentDateTime()
