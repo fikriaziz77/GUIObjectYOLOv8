@@ -163,12 +163,11 @@ class MainWindow(QMainWindow):
         self.resource_usage.ram.connect(self.getRAM_usage)
         self.resource_usage.temp.connect(self.getTemp_usage)
         
-        self.getObjStatus = ThreadClass()
-        self.getObjStatus.status.connect(self.getObj_status)
-        
-        
         #homingrobot
         self.pb_homing.clicked.connect(self.sendDataHoming)
+        
+        #initiate
+        self.pb_grab.setEnabled(False)
 
         #runtime start
         self.lcd_timer = QTimer()
@@ -207,6 +206,7 @@ class MainWindow(QMainWindow):
         else:
             self.hide_manual_button()
             self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Manual Mode Deactive!")
+    
             
     def leveljog(self):
         if self.slider_jog.value() == 0:
@@ -274,6 +274,8 @@ class MainWindow(QMainWindow):
         self.plot_start.setEnabled(False)
         self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Object Detection Starting, Please wait..")
         
+        self.Opencv.status.connect(self.getObj_status)
+        
         self.cb_manual.setEnabled(False)
         
     def StopPlot(self):
@@ -300,8 +302,12 @@ class MainWindow(QMainWindow):
         return pixmap #QPixmap.fromImage(cvt2QtFormat)
 #-----
     def getObj_status(self,status):
-        window.stat_obj.setStyleSheet(status)
-    
+        self.stat_obj.setStyleSheet(status)
+        if status == "background-color: rgb(0,255,0)":
+            self.pb_grab.setEnabled(True)
+        else :
+            self.pb_grab.setEnabled(False)
+            
     def getCPU_usage(self,cpu):
         self.com_cpu.setText(str(cpu) + "%")
         if cpu > 15: self.com_cpu.setStyleSheet("color: rgb(23, 63, 95);")
