@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
+    <width>1278</width>
     <height>684</height>
    </rect>
   </property>
@@ -500,7 +500,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QPushButton" name="pb_yawmin">
      <property name="geometry">
       <rect>
-       <x>300</x>
+       <x>10</x>
        <y>280</y>
        <width>141</width>
        <height>91</height>
@@ -563,37 +563,11 @@ background-color: rgb(211, 215, 207);</string>
       <string>Y-</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pb_zmin">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>141</width>
-       <height>91</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Manjari</family>
-       <pointsize>15</pointsize>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">font: 15pt &quot;Manjari&quot;;
-background-color: rgb(211, 215, 207);</string>
-     </property>
-     <property name="text">
-      <string>Z-</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="pb_yawplus">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>280</y>
+       <y>60</y>
        <width>141</width>
        <height>91</height>
       </rect>
@@ -643,9 +617,9 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QSlider" name="slider_jog">
      <property name="geometry">
       <rect>
-       <x>350</x>
+       <x>370</x>
        <y>30</y>
-       <width>91</width>
+       <width>71</width>
        <height>20</height>
       </rect>
      </property>
@@ -653,7 +627,7 @@ background-color: rgb(211, 215, 207);</string>
       <number>0</number>
      </property>
      <property name="maximum">
-      <number>3</number>
+      <number>2</number>
      </property>
      <property name="value">
       <number>0</number>
@@ -676,6 +650,32 @@ background-color: rgb(211, 215, 207);</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pb_zmin">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>280</y>
+       <width>141</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Manjari</family>
+       <pointsize>15</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 15pt &quot;Manjari&quot;;
+background-color: rgb(211, 215, 207);</string>
+     </property>
+     <property name="text">
+      <string>Z-</string>
      </property>
     </widget>
    </widget>
@@ -1053,7 +1053,7 @@ background-color: rgb(211, 215, 207);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1280</width>
+     <width>1278</width>
      <height>22</height>
     </rect>
    </property>

@@ -11,6 +11,10 @@ from ultralytics import YOLO
 import torch
 torch.cuda.set_device(0)
 
+global mul_jog
+mul_jog = 0
+
+
 global objpos
 objpos = [0,0,0]
  
@@ -33,7 +37,10 @@ class ThreadClass(QThread):
                 results = model.predict(fr, imgsz=320, conf=0.3, device='0')
                 result = results[0]
                 box = result.obb
-                
+                  
+                frame = cv2.imread('assets/background.png')
+                frame = cv2.resize(frame, (730,400))
+                    
                 if result:    
                     cords = box.xywhr[0].tolist()
                     x = round(cords[0])
@@ -41,6 +48,11 @@ class ThreadClass(QThread):
                     val = cords[4]
                     r = round(math.degrees(val),2)
                     status = "background-color: rgb(0,255,0)"
+                    rect = ((guix, guiy), (20, 20), r)
+                    boxx = cv2.boxPoints(rect) 
+                    boxx = np.int0(boxx)
+                    cv2.drawContours(frame,[boxx],0,(0,0,255),2)
+                    cv2.circle(frame, (guix,guiy), 1, (0,0,255), 3)
                     
                 else:
                     x = 0
@@ -50,15 +62,13 @@ class ThreadClass(QThread):
                 
                 global objpos
                 objpos = [x,y,r]
-            
-            frame = cv2.imread('assets/background.png')
-            frame = cv2.resize(frame, (730,400))
+          
             print("=========")
             print(objpos)
             
             guix = round(1.0184*x)
             guiy = round(0.9921*y)
-            cv2.circle(frame, (guix,guiy), 4, (0,255,0), 4)
+            
             self.ImageUpdate.emit(frame)
             
             self.status.emit(status)
@@ -121,11 +131,10 @@ class MainWindow(QMainWindow):
         self.pb_grip.setEnabled(True)
         self.slider_jog.setEnabled(True)
         self.lbl_jog.setEnabled(True)
+        self.pb_homing.setEnabled(True)
         self.plot_start.setEnabled(False)
         self.plot_stop.setEnabled(False)
-        self.pb_homing.setEnabled(True)
-        
-    
+
     def hide_manual_button(self):
         self.pb_xmin.setEnabled(False)
         self.pb_ymin.setEnabled(False)
@@ -138,9 +147,9 @@ class MainWindow(QMainWindow):
         self.pb_grip.setEnabled(False)
         self.slider_jog.setEnabled(False)
         self.lbl_jog.setEnabled(False)
+        self.pb_homing.setEnabled(False)
         self.plot_start.setEnabled(True)
         self.plot_stop.setEnabled(True)
-        self.pb_homing.setEnabled(False)
     
     def __init__(self):
         super().__init__()
@@ -155,6 +164,14 @@ class MainWindow(QMainWindow):
         self.cb_manual.clicked.connect(self.manualdrive)
         self.slider_jog.valueChanged.connect(self.leveljog)
         self.pb_grip.clicked.connect(self.man_grip)
+        self.pb_xmin.clicked.connect(lambda:self.movemanualrobot(self.pb_xmin))
+        self.pb_xplus.clicked.connect(lambda:self.movemanualrobot(self.pb_xplus))
+        self.pb_ymin.clicked.connect(lambda:self.movemanualrobot(self.pb_ymin))
+        self.pb_yplus.clicked.connect(lambda:self.movemanualrobot(self.pb_yplus))
+        self.pb_zmin.clicked.connect(lambda:self.movemanualrobot(self.pb_zmin))
+        self.pb_zplus.clicked.connect(lambda:self.movemanualrobot(self.pb_zplus))
+        self.pb_yawmin.clicked.connect(lambda:self.movemanualrobot(self.pb_yawmin))
+        self.pb_yawplus.clicked.connect(lambda:self.movemanualrobot(self.pb_yawplus))     
         
         #resource usage cpu
         self.resource_usage = boardInfoClass()
@@ -166,13 +183,17 @@ class MainWindow(QMainWindow):
         #homingrobot
         self.pb_homing.clicked.connect(self.sendDataHoming)
         
-        #initiate
-        self.pb_grab.setEnabled(False)
-
+        #grab_object
+        self.pb_grab.clicked.connect(self.sendDataPosition)
+        
         #runtime start
         self.lcd_timer = QTimer()
         self.lcd_timer.timeout.connect(self.clock_func)
         self.lcd_timer.start()
+        
+        #
+        self.pb_grab.setEnabled(False)
+        self.stat_obj.setEnabled(False)
         
         #communication serial menu
         self.menuComm.triggered.connect(self.MenuSerialComm)
@@ -194,7 +215,7 @@ class MainWindow(QMainWindow):
         
         #close menu
         self.actionExit.triggered.connect(self.MenuExit)
-        
+
         #about menu
         self.actionAbout.triggered.connect(self.MenuAbout)
         self.win_about = Window_About()
@@ -207,20 +228,46 @@ class MainWindow(QMainWindow):
             self.hide_manual_button()
             self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Manual Mode Deactive!")
     
+    def movemanualrobot(self,button):
+        global mul_jog
+        
+        manx = 0
+        many = 0
+        manz = 0
+        manyaw = 0
+        
+        if button.text() == 'X+':
+            manx = 1*mul_jog
+        elif button.text() == 'X-':
+            manx = -1*mul_jog
+        elif button.text() == 'Y+':
+            many = 1*mul_jog
+        elif button.text() == 'Y-':
+            many = -1*mul_jog
+        elif button.text() == 'Z+':
+            manz = 1*mul_jog
+        elif button.text() == 'Z-':
+            manz = -1*mul_jog
+        elif button.text() == 'YAW+':
+            manyaw = 1*mul_jog
+        elif button.text() == 'YAW-':
+            manyaw = -1*mul_jog
             
+        data = f"2,{manx},{many},{manz},{manyaw}"
+        self.ser.write(data.encode('utf-8'))
+        
     def leveljog(self):
+        global mul_jog
+        
         if self.slider_jog.value() == 0:
             self.lbl_jog.setText("x0")
-            self.mul_jog = 0
+            mul_jog = 0
         elif self.slider_jog.value() == 1:
             self.lbl_jog.setText("x1")
-            self.mul_jog = 1
+            mul_jog = 1
         elif self.slider_jog.value() == 2:
             self.lbl_jog.setText("x10")
-            self.mul_jog = 10
-        elif self.slider_jog.value() == 3:
-            self.lbl_jog.setText("x100")
-            self.mul_jog = 100
+            mul_jog = 10
             
     def man_grip(self):
         if self.pb_grip.isChecked():
@@ -246,6 +293,17 @@ class MainWindow(QMainWindow):
         data = "3"
         self.ser.write(data.encode('utf-8'))
         self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Homing Delta Robot!")
+    
+    def sendDataPosition(self):
+        data = "1"
+        global objpos
+        data_str = f"{data},{objpos[0]},{objpos[1]},0,{objpos[2]}" #address,x,y,z,r
+        self.ser.write(data.encode('utf-8'))
+        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Collecting Object at X={objpos[0]} and Y={objpos[1]}")
+        
+        self.pb_grab.setEnabled(False)
+        self.stat_obj.setEnabled(False)
+        self.Opencv.stop()
     
     def SerialCommTest(self):
         prt = self.win_showset.comm_portlist.currentText()
@@ -284,6 +342,8 @@ class MainWindow(QMainWindow):
         self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Object Detection Stoped !")
         
         self.cb_manual.setEnabled(True)
+        self.pb_grab.setEnabled(False)
+        self.stat_obj.setEnabled(False)
 
     def opencv_emit(self, Image):
 
@@ -326,7 +386,7 @@ class MainWindow(QMainWindow):
     
     def getTemp_usage(self,temp):
         self.com_temp.setText(str(temp) + "°C")
-        if temp > 30: self.com_temp.setStyleSheet("color: rgb(23, 63, 95);")
+        if temp > 25: self.com_temp.setStyleSheet("color: rgb(23, 63, 95);")
         if temp > 35: self.com_temp.setStyleSheet("color: rgb(60, 174, 155);")
         if temp > 40: self.com_temp.setStyleSheet("color: rgb(246,213, 92);")
         if temp > 45: self.com_temp.setStyleSheet("color: rgb(237, 85, 59);")
