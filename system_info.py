@@ -1,4 +1,3 @@
-
 import psutil
 
 def getCPU():

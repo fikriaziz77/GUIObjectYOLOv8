@@ -47,7 +47,14 @@ class ThreadClass(QThread):
                     y = round(cords[1])
                     val = cords[4]
                     r = round(math.degrees(val),2)
+                    
+                    if r > 90:
+                        r = r-90
+                        
                     status = "background-color: rgb(0,255,0)"
+                    
+                    guix = round(1.0184*x)
+                    guiy = round(0.9921*y)
                     rect = ((guix, guiy), (20, 20), r)
                     boxx = cv2.boxPoints(rect) 
                     boxx = np.int0(boxx)
@@ -62,12 +69,6 @@ class ThreadClass(QThread):
                 
                 global objpos
                 objpos = [x,y,r]
-          
-            print("=========")
-            print(objpos)
-            
-            guix = round(1.0184*x)
-            guiy = round(0.9921*y)
             
             self.ImageUpdate.emit(frame)
             
@@ -236,25 +237,27 @@ class MainWindow(QMainWindow):
         manz = 0
         manyaw = 0
         
-        if button.text() == 'X+':
-            manx = 1*mul_jog
-        elif button.text() == 'X-':
-            manx = -1*mul_jog
-        elif button.text() == 'Y+':
-            many = 1*mul_jog
-        elif button.text() == 'Y-':
-            many = -1*mul_jog
-        elif button.text() == 'Z+':
-            manz = 1*mul_jog
-        elif button.text() == 'Z-':
-            manz = -1*mul_jog
-        elif button.text() == 'YAW+':
-            manyaw = 1*mul_jog
-        elif button.text() == 'YAW-':
-            manyaw = -1*mul_jog
+        if mul_jog > 0:
+            if button.text() == 'X+':
+                manx = 1*mul_jog
+            elif button.text() == 'X-':
+                manx = -1*mul_jog
+            elif button.text() == 'Y+':
+                many = 1*mul_jog
+            elif button.text() == 'Y-':
+                many = -1*mul_jog
+            elif button.text() == 'Z+':
+                manz = 1*mul_jog
+            elif button.text() == 'Z-':
+                manz = -1*mul_jog
+            elif button.text() == 'YAW+':
+                manyaw = 1*mul_jog
+            elif button.text() == 'YAW-':
+                manyaw = -1*mul_jog
             
-        data = f"2,{manx},{many},{manz},{manyaw}"
-        self.ser.write(data.encode('utf-8'))
+            data = f"2,{manx},{many},{manz},{manyaw}"
+            self.ser.write(data.encode('utf-8'))
+
         
     def leveljog(self):
         global mul_jog
@@ -268,6 +271,9 @@ class MainWindow(QMainWindow):
         elif self.slider_jog.value() == 2:
             self.lbl_jog.setText("x10")
             mul_jog = 10
+        elif self.slider_jog.value() == 3:
+            self.lbl_jog.setText("x100")
+            mul_jog = 100
             
     def man_grip(self):
         if self.pb_grip.isChecked():
@@ -295,11 +301,17 @@ class MainWindow(QMainWindow):
         self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Homing Delta Robot!")
     
     def sendDataPosition(self):
-        data = "1"
         global objpos
-        data_str = f"{data},{objpos[0]},{objpos[1]},0,{objpos[2]}" #address,x,y,z,r
+        
+        rx = round((0.4325*objpos[0])-155,2)
+        ry = round((-0.4464*objpos[1])+90,2)
+        rz = -100
+        
+        data = f"1,{rx},{ry},{rz},{objpos[2]}" #address,x,y,z,r
         self.ser.write(data.encode('utf-8'))
-        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Collecting Object at X={objpos[0]} and Y={objpos[1]}")
+        baca = self.ser.readline().decode('utf-8')
+        print(baca)
+        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Collecting Object at X={rx} and Y={ry}")
         
         self.pb_grab.setEnabled(False)
         self.stat_obj.setEnabled(False)
