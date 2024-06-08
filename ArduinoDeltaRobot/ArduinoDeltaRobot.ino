@@ -30,6 +30,7 @@ int done2 = 0;
 int done3 = 0;
 int doneW = 0;
 
+
 AccelStepper Motor1(1, Step1, Dir1);
 AccelStepper Motor2(1, Step2, Dir2);
 AccelStepper Motor3(1, Step3, Dir3);
@@ -37,7 +38,7 @@ AccelStepper MotorW(1, StepW, DirW);
 
 float theta1, theta2, theta3, thetaW;
 int pt1, pt2, pt3, ptw;
-int siklus;
+int siklus, siklus_man;
 float x, y, z, w;
 float curr_x, curr_y, curr_z, curr_w;
 
@@ -57,14 +58,13 @@ int f1 = 0;
 
 
 void setup() {
-
   Motor1.setMaxSpeed(400);
   Motor2.setMaxSpeed(400);
   Motor3.setMaxSpeed(400);
   MotorW.setMaxSpeed(300);
-  Motor1.setAcceleration(200);
-  Motor2.setAcceleration(200);
-  Motor3.setAcceleration(200);
+  Motor1.setAcceleration(300);
+  Motor2.setAcceleration(300);
+  Motor3.setAcceleration(300);
   MotorW.setAcceleration(100);
   
   pinMode(ENA, OUTPUT); 
@@ -85,6 +85,16 @@ void setup() {
 
 
 int homing(){
+
+  Motor1.setMaxSpeed(400);
+  Motor2.setMaxSpeed(400);
+  Motor3.setMaxSpeed(400);
+  MotorW.setMaxSpeed(300);
+  Motor1.setAcceleration(200);
+  Motor2.setAcceleration(200);
+  Motor3.setAcceleration(200);
+  MotorW.setAcceleration(200);
+  
   homing_complete = 0;
   done1 = 0;
   done2 = 0;
@@ -133,9 +143,9 @@ int homing(){
     Motor3.run();
 
     if(Motor1.distanceToGo() == 0 && Motor2.distanceToGo() == 0 && Motor3.distanceToGo() == 0){
-      Motor1.setCurrentPosition(-208); //homing ke -15 derajat
-      Motor2.setCurrentPosition(-208);
-      Motor3.setCurrentPosition(-208);    
+      Motor1.setCurrentPosition(-41); //homing ke -15 derajat
+      Motor2.setCurrentPosition(-41);
+      Motor3.setCurrentPosition(-41);    
       homing_complete = 2;
       break;
     }
@@ -167,7 +177,6 @@ int homing(){
       delay(200);
       digitalWrite(gripper, 1);
       homing_complete = 4;
-      Serial.println("h_done");
       x = 0;
       y = 0;
       z = 0;
@@ -212,14 +221,14 @@ if (isnan(hasilth[0]) == 0 && isnan(hasilth[1]) == 0  && isnan(hasilth[2]) == 0)
     theta1 = hasilth[0];
     theta2 = hasilth[1];
     theta3 = hasilth[2];
-    //thetaW = 0;
+    thetaW = ikw*(-1);
     f1 = 0;
 }
 else {
     theta1 = 0;
     theta2 = 0;
     theta3 = 0;
-    //thetaW = 0; 
+    thetaW = 0; 
     f1 = -1;
 }      
 
@@ -252,7 +261,13 @@ void deg2pulse(float t1, float t2, float t3, float w){
 
 
 int moveRobot(int p1,int p2,int p3,int pw)
-{  
+{ /* 
+  int spedm1 = max(100,min(abs(p1-Motor1.currentPosition()),400)); 
+  int spedm2 = max(100,min(abs(p2-Motor2.currentPosition()),400));
+  int spedm3 = max(100,min(abs(p3-Motor3.currentPosition()),400));
+  Motor1.setMaxSpeed(spedm1);
+  Motor2.setMaxSpeed(spedm2);
+  Motor3.setMaxSpeed(spedm3);*/
   Motor1.moveTo(p1);
   Motor2.moveTo(p2);
   Motor3.moveTo(p3);
@@ -261,6 +276,7 @@ int moveRobot(int p1,int p2,int p3,int pw)
   Motor2.run();
   Motor3.run();
   MotorW.run();
+  
 
   if(Motor1.distanceToGo() == 0 && Motor2.distanceToGo() == 0 && Motor3.distanceToGo() == 0 && MotorW.distanceToGo() == 0){
     return 1;
@@ -279,146 +295,169 @@ void titik(float sx, float sy, float sz, float sw){
 
 void siklus_robot(float jx, float jy,float jz, float jw)
 {
-  bool runsiklus = true;
-  siklus=1;
-  while(runsiklus){
      
-  if (siklus == 1){ //keposisi benda
+  while (siklus == 1){ //keposisi benda
     titik(jx, jy, jz, jw);  
     int exist = invers_kinematik(x, y, z, w);
+    Serial.println(exist);
     if (exist == 0){
     deg2pulse(theta1, theta2, theta3, thetaW);
     int stat = moveRobot(pt1, pt2, pt3, ptw);
-    if (stat==1)siklus++;
+    if (stat==1){
+      siklus = 2; 
+      break;  
     }
-    //Serial.println(exist);
+    }
   }
   
-  else if (siklus == 2){ //z turun
+  while (siklus == 2){ //z turun
     titik(jx, jy, -200, jw);
     int exist = invers_kinematik(x, y, z, w);
     if (exist==0){
     deg2pulse(theta1, theta2, theta3, thetaW);
     int stat = moveRobot(pt1, pt2, pt3, ptw);
-    if (stat==1)siklus++;
+    if (stat==1){
+      siklus = 3; 
+      break;  
+    }
   }
   }
-  else if (siklus == 3){ //grip benda
+  while (siklus == 3){ //grip benda
     digitalWrite(gripper,0);
-    delay(10);
-    siklus++;
+    delay(100);
+    siklus = 4;
+    break;
   }
 
-  else if (siklus == 4){ //z naik
+  while (siklus == 4){ //z naik
     titik(jx, jy, jz, jw);
     int exist = invers_kinematik(x, y, z, w);
     if (exist==0){
     deg2pulse(theta1, theta2, theta3, thetaW);
     int stat = moveRobot(pt1, pt2, pt3, ptw);
-    if (stat==1)siklus++;
+    if (stat==1){
+      siklus = 5;
+      break;  
+    }
   }
   }
 
-  else if (siklus == 5){ //keposisi place
-    titik(175, 55, jz, 0);
+  while (siklus == 5){ //keposisi place
+    titik(155, 55, jz, 0);
     int exist = invers_kinematik(x, y, z, w);
     if (exist==0){
     deg2pulse(theta1, theta2, theta3, thetaW);
     int stat = moveRobot(pt1, pt2, pt3, ptw);
-    if (stat==1)siklus++;
+    if (stat==1){
+      siklus = 6; 
+      break;  
+    }
   }
   }
 
-  else if (siklus == 6){ //z turun
-    titik(175, 55, -200, 0);
+  while (siklus == 6){ //z turun
+    titik(155, 55, -200, 0);
     int exist = invers_kinematik(x, y, z, w);
     if (exist==0){
     deg2pulse(theta1, theta2, theta3, thetaW);
     int stat = moveRobot(pt1, pt2, pt3, ptw);
-    if (stat==1)siklus++;
+    if (stat==1){
+      siklus = 7; 
+      break;  
+    }
   }
   }
-  else if (siklus == 7){ //lepas benda
+  while (siklus == 7){ //lepas benda
     digitalWrite(gripper,1);
-    delay(10);
-    siklus++;
-  }
-
-  else if (siklus == 8){ //z naik
-    titik(195, 55, jz, 0);
-    int exist = invers_kinematik(x, y, z, w);
-    if (exist==0){
-    deg2pulse(theta1, theta2, theta3, thetaW);
-    int stat = moveRobot(pt1, pt2, pt3, ptw);
-    if (stat==1)siklus++;
-  }
-  }
-  else if (siklus == 9){ //homing
-    homing();
-    if (homing_complete == 4) siklus++;
-  }
-
-  else if (siklus == 10){
-    Serial.println("pnp_done");
-    runsiklus = false;
+    delay(100);
+    siklus = 8;
     break;
   }
 
-  Serial.println(siklus);
+  while (siklus == 8){ //z naik
+    titik(155, 55, jz, 0);
+    int exist = invers_kinematik(x, y, z, w);
+    if (exist==0){
+    deg2pulse(theta1, theta2, theta3, thetaW);
+    int stat = moveRobot(pt1, pt2, pt3, ptw);
+    if (stat==1){
+      siklus = 9; 
+      break;  
+    }
   }
+  }
+
+    while (siklus == 9){ //ke tengah
+    titik(0, 0, jz, 0);
+    int exist = invers_kinematik(x, y, z, w);
+    if (exist==0){
+    deg2pulse(theta1, theta2, theta3, thetaW);
+    int stat = moveRobot(pt1, pt2, pt3, ptw);
+    if (stat==1){
+      siklus = 10; 
+      break;  
+    }
+  }
+  }
+
+  while (siklus == 10){ //homing
+    homing();
+    if (homing_complete == 4){
+      siklus = 11; 
+      break;
+    }
+  }
+
 }
 
 void robot_manual_move(float mx, float my,float mz, float mw){
-  bool man = true;
-  
-  while(man){
-  x = x + mx;
-  y = y + my;
-  z = z + mz;
-  w = w + mw;
 
+  x = x + mx; y = y + my;  z = z + mz; w = w + mw;
+  //Serial.print(x); Serial.print(" | "); Serial.print(y); Serial.print(" | "); Serial.println(z);
+  while (siklus_man==1){
   int exist = invers_kinematik(x, y, z, w);
     if (exist==0){
   deg2pulse(theta1, theta2, theta3, thetaW);
   int stat = moveRobot(pt1, pt2, pt3, ptw);
   if (stat==1){
-    man = false;
-    break; 
+    siklus_man = 2;
+    break;
   }
   }
   }
+  
 }
 
 void loop() {
-
-  homing();
-  siklus_robot(50,50,-100,0);
-  
+ 
   if (Serial.available()>0){
     String data = Serial.readStringUntil('\n');
     
     int address = getValue(data, ',', 0).toInt();
-
+    
     if(address == 1){
-      String sx = getValue(data, ',', 1);
-      String sy = getValue(data, ',', 2);
-      String sz = getValue(data, ',', 3);
-      String sw = getValue(data, ',', 4);
+      float sx = getValue(data, ',', 1).toFloat();
+      float sy = getValue(data, ',', 2).toFloat();
+      float sz = getValue(data, ',', 3).toFloat();
+      float sw = getValue(data, ',', 4).toFloat();
       siklus = 1;
-      siklus_robot(sx.toFloat(), sy.toFloat() + offsetcam, sz.toFloat(), sw.toFloat());   
+      siklus_robot(sx, sy + offsetcam, sz, sw);
       }
       
     else if(address == 2){
-      String man_x = getValue(data, ',', 1);
-      String man_y = getValue(data, ',', 2);
-      String man_z = getValue(data, ',', 3);
-      String man_w = getValue(data, ',', 4);
-      robot_manual_move(man_x.toFloat(), man_y.toFloat(), man_z.toFloat(), man_w.toFloat());
+      float man_x = getValue(data, ',', 1).toFloat();
+      float man_y = getValue(data, ',', 2).toFloat();
+      float man_z = getValue(data, ',', 3).toFloat();
+      float man_w = getValue(data, ',', 4).toFloat();
+      siklus_man = 1;
+      robot_manual_move(man_x, man_y, man_z, man_w);
       }
       
-    else if(address == 3) homing();
+    else if(address == 3){
+      homing();
+    }
     
-    else if(address == 4){
+    else if (address == 4){
       int grip_en = getValue(data, ',', 1).toInt();
       digitalWrite(gripper,grip_en);
       }
