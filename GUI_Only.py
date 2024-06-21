@@ -305,7 +305,7 @@ class MainWindow(QMainWindow):
         
         rx = round((0.4325*objpos[0])-155,2)
         ry = round((-0.4464*objpos[1])+90,2)
-        rz = -100
+        rz = -150
         
         data = f"1,{rx},{ry},{rz},{objpos[2]}" #address,x,y,z,r
         self.ser.write(data.encode('utf-8'))
