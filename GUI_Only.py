@@ -171,8 +171,9 @@ class MainWindow(QMainWindow):
         self.pb_yplus.clicked.connect(lambda:self.movemanualrobot(self.pb_yplus))
         self.pb_zmin.clicked.connect(lambda:self.movemanualrobot(self.pb_zmin))
         self.pb_zplus.clicked.connect(lambda:self.movemanualrobot(self.pb_zplus))
-        self.pb_yawmin.clicked.connect(lambda:self.movemanualrobot(self.pb_yawmin))
-        self.pb_yawplus.clicked.connect(lambda:self.movemanualrobot(self.pb_yawplus))     
+        
+        self.pb_yawmin.clicked.connect(lambda:self.movemanualrobotw(self.pb_yawmin))
+        self.pb_yawplus.clicked.connect(lambda:self.movemanualrobotw(self.pb_yawplus))     
         
         #resource usage cpu
         self.resource_usage = boardInfoClass()
@@ -235,7 +236,6 @@ class MainWindow(QMainWindow):
         manx = 0
         many = 0
         manz = 0
-        manyaw = 0
         
         if mul_jog > 0:
             if button.text() == 'X+':
@@ -250,15 +250,23 @@ class MainWindow(QMainWindow):
                 manz = 1*mul_jog
             elif button.text() == 'Z-':
                 manz = -1*mul_jog
-            elif button.text() == 'YAW+':
-                manyaw = 1*mul_jog
-            elif button.text() == 'YAW-':
-                manyaw = -1*mul_jog
             
-            data = f"2,{manx},{many},{manz},{manyaw}"
+            data = f"2,{manx},{many},{manz}"
             self.ser.write(data.encode('utf-8'))
 
+    def movemanualrobotw(self,button):
+        global mul_jog
         
+        manyaw = 0
+        
+        if button.text() == 'YAW+':
+            manyaw = 1*mul_jog
+        elif button.text() == 'YAW-':
+            manyaw = -1*mul_jog
+            
+        data = f"5,{manyaw}"
+        self.ser.write(data.encode('utf-8'))
+                
     def leveljog(self):
         global mul_jog
         
