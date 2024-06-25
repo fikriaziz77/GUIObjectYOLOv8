@@ -23,27 +23,17 @@ Install dependencies:
 ```
 pip install -r requirements.txt
 ```
+lihat pada file `README (git)` untuk informasi selengkapnya.
 
-# Penggunaan
-Setelah instalasi, Anda dapat menjalankan script utama untuk memulai proses:
 
-bash
-Copy code
-python src/model_training.py
-Anda juga dapat menggunakan Jupyter notebooks di direktori notebooks untuk eksplorasi data dan analisis lebih lanjut.
+## Penggunaan
+Setelah instalasi, Anda dapat menjalankan script utama untuk menjalankan aplikasi desktop:
 
-Kontribusi
-Kontribusi sangat terbuka untuk proyek ini. Jika Anda ingin berkontribusi, silakan fork repository ini, buat branch dengan fitur atau perbaikan baru, dan kirim pull request.
+```
+python GUIOnly.py
+```
 
-Fork repository ini
-Buat branch fitur baru (git checkout -b fitur-baru)
-Commit perubahan Anda (git commit -am 'Tambahkan fitur baru')
-Push ke branch (git push origin fitur-baru)
-Buat Pull Request
-Lisensi
-Proyek ini dilisensikan di bawah [Nama Lisensi] - lihat file LICENSE untuk detailnya.
-
-Kontak
-Jika Anda memiliki pertanyaan atau masukan, silakan hubungi saya di [email@example.com].
+## Kontak
+Jika Anda memiliki pertanyaan atau masukan, silakan hubungi saya di fikri.official77@gmail.com
 
 Dengan README ini, pengguna dapat dengan mudah memahami tujuan proyek, cara menginstal dan menjalankan kode, serta bagaimana mereka bisa berkontribusi.
