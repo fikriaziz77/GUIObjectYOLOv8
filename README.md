@@ -8,25 +8,24 @@ Proyek tugas akhir ini berfokus pada pengendalian _end effector_ robot paralel D
 Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
 Clone repository ini:
-
-bash
-Copy code
-git clone https://github.com/username/repository-tugas-akhir.git
+```
+git clone https://github.com/fikriaziz77/GUIObjectYOLOv8
 cd repository-tugas-akhir
+```
 Buat virtual environment dan aktifkan:
-
-bash
-Copy code
+```
 python -m venv venv
 source venv/bin/activate  # Untuk pengguna Unix/macOS
 venv\Scripts\activate     # Untuk pengguna Windows
-Install dependencies:
+```
 
-bash
-Copy code
+Install dependencies:
+```
 pip install -r requirements.txt
-Penggunaan
-Setelah instalasi, Anda dapat menjalankan script utama untuk memulai proses [contoh: pelatihan model]:
+```
+
+# Penggunaan
+Setelah instalasi, Anda dapat menjalankan script utama untuk memulai proses:
 
 bash
 Copy code
