@@ -30,7 +30,7 @@ lihat pada file `README (git)` untuk informasi selengkapnya.
 Setelah instalasi, Anda dapat menjalankan script utama untuk menjalankan aplikasi desktop:
 
 ```
-python GUIOnly.py
+python GUI_Only.py
 ```
 
 ## Kontak
