@@ -29,7 +29,7 @@ Install dependencies:
 ```
 pip install -r requirements.txt
 ```
-lihat pada file https://github.com/fikriaziz77/GUIObjectYOLOv8/edit/master/README (git) untuk informasi selengkapnya.
+lihat pada file https://github.com/fikriaziz77/GUIObjectYOLOv8/edit/master/README%20(git) untuk informasi selengkapnya.
 
 
 ## Penggunaan
