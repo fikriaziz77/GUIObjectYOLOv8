@@ -1,0 +1,5 @@
+numpy==1.24.4
+opencv-python==4.9.0
+ultralytics==8.1.0
+psutil==5.5.1
+pytorch==1.13.0
