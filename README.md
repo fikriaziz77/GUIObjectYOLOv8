@@ -29,7 +29,7 @@ Install dependencies:
 ```
 pip install -r requirements.txt
 ```
-lihat pada file `README (git)` untuk informasi selengkapnya.
+lihat pada file https://github.com/fikriaziz77/GUIObjectYOLOv8/edit/master/README (git) untuk informasi selengkapnya.
 
 
 ## Penggunaan
@@ -38,6 +38,9 @@ Setelah instalasi, Anda dapat menjalankan script utama untuk menjalankan aplikas
 ```
 python GUI_Only.py
 ```
+
+## Dataset
+Menggunakan platform `Roboflow` untuk melakukan anotasi dataset. Anda dapat mengakses dataset tersebut pada https://universe.roboflow.com/pcbrelay/pcb_relaymodule
 
 ## Kontak
 Jika Anda memiliki pertanyaan atau masukan, silakan hubungi saya di fikri.official77@gmail.com
