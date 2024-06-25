@@ -1,41 +1,10 @@
-Repository Tugas Akhir
+# Repository Tugas Akhir
+
 Selamat datang di repository Tugas Akhir! Repository ini berisi semua kode, data, dan dokumentasi yang diperlukan untuk proyek tugas akhir saya. Proyek ini adalah bagian dari syarat untuk memperoleh gelar Sarjana Terapan Teknologi (S.Tr.T) di Politeknik Manufaktur Bandung pada jurusan Teknik Otomasi Manufaktur dan Mekatronika.
 
-Daftar Isi
-Pendahuluan
-Struktur Repository
-Instalasi
-Penggunaan
-Kontribusi
-Lisensi
-Kontak
-Pendahuluan
-Proyek tugas akhir ini berfokus pada [deskripsi singkat proyek, misalnya "pengembangan algoritma machine learning untuk prediksi harga saham"]. Tujuan dari proyek ini adalah untuk [tujuan proyek, misalnya "meningkatkan akurasi prediksi harga saham menggunakan data historis"].
+Proyek tugas akhir ini berfokus pada pengendalian _end effector_ robot paralel Delta.
 
-Struktur Repository
-Berikut adalah struktur dari repository ini:
-
-bash
-Copy code
-.
-├── data
-│   ├── raw                # Data mentah yang digunakan dalam proyek
-│   ├── processed          # Data yang sudah diproses
-├── docs                   # Dokumentasi proyek
-├── notebooks              # Jupyter notebooks untuk eksplorasi dan analisis data
-├── src                    # Source code utama untuk proyek
-│   ├── __init__.py
-│   ├── data_preprocessing.py
-│   ├── model_training.py
-│   ├── evaluation.py
-├── tests                  # Kode untuk unit testing
-│   ├── __init__.py
-│   ├── test_data_preprocessing.py
-│   ├── test_model_training.py
-├── requirements.txt       # Daftar dependencies atau pustaka yang diperlukan
-├── README.md              # Deskripsi umum dari repository ini
-└── LICENSE                # Lisensi proyek
-Instalasi
+## Instalasi
 Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
 Clone repository ini:
