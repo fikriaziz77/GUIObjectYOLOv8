@@ -4,8 +4,8 @@
 Repository ini berisi semua kode, data, dan dokumentasi yang diperlukan untuk proyek tugas akhir saya. Proyek ini adalah bagian dari syarat untuk memperoleh gelar Sarjana Terapan Teknologi (S.Tr.T) di Politeknik Manufaktur Bandung pada jurusan Teknik Otomasi Manufaktur dan Mekatronika.
 
 <p align="center">
-  <img src="https://github.com/fikriaziz77/GUIObjectYOLOv8/blob/master/sample/machine/machine1.jpeg?raw=true" width="350" title="Foto Mesin">
-  <img src="https://github.com/fikriaziz77/GUIObjectYOLOv8/blob/master/sample/machine/machine1.jpeg?raw=true" width="350" title="Foto Mesin">  
+  <img src="https://github.com/fikriaziz77/GUIObjectYOLOv8/blob/master/sample/machine/machine1.jpeg?raw=true" height="350" title="Foto Mesin">
+  <img src="https://github.com/fikriaziz77/GUIObjectYOLOv8/blob/master/sample/paper/judul.png?raw=true" height="350" title="Judul">  
 </p>
 
 Proyek tugas akhir ini berfokus pada pengendalian _end effector_ robot paralel Delta dengan menggunakan _image processing_ berbasis aplikasi desktop.
