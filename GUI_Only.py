@@ -253,6 +253,10 @@ class MainWindow(QMainWindow):
             
             data = f"2,{manx},{many},{manz}"
             self.ser.write(data.encode('utf-8'))
+            res_delta = self.ser.readline().decode('utf-8').strip()
+            self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: {res_delta}")
+        
+            
 
     def movemanualrobotw(self,button):
         global mul_jog
@@ -266,7 +270,9 @@ class MainWindow(QMainWindow):
             
         data = f"5,{manyaw}"
         self.ser.write(data.encode('utf-8'))
-                
+        res_delta = self.ser.readline().decode('utf-8').strip()
+        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: {res_delta}")        
+    
     def leveljog(self):
         global mul_jog
         
@@ -280,6 +286,9 @@ class MainWindow(QMainWindow):
             self.lbl_jog.setText("x10")
             mul_jog = 10
         elif self.slider_jog.value() == 3:
+            self.lbl_jog.setText("x50")
+            mul_jog = 50
+        elif self.slider_jog.value() == 4:
             self.lbl_jog.setText("x100")
             mul_jog = 100
             
@@ -313,9 +322,9 @@ class MainWindow(QMainWindow):
         
         rx = round((0.4325*objpos[0])-155,2)
         ry = round((-0.4464*objpos[1])+90,2)
-        rz = -150
+        rz = -200
         
-        data = f"1,{rx},{ry},{rz},{objpos[2]}" #address,x,y,z,r
+        data = f"1,{rx},{ry},{rz}" #address,x,y,z,r
         self.ser.write(data.encode('utf-8'))
         baca = self.ser.readline().decode('utf-8')
         print(baca)

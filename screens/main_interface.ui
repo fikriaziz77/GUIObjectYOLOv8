@@ -627,7 +627,7 @@ background-color: rgb(211, 215, 207);</string>
       <number>0</number>
      </property>
      <property name="maximum">
-      <number>3</number>
+      <number>4</number>
      </property>
      <property name="value">
       <number>0</number>
