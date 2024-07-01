@@ -14,6 +14,8 @@ torch.cuda.set_device(0)
 global mul_jog
 mul_jog = 0
 
+global _isAuto_run
+_isAuto_run = False
 
 global objpos
 objpos = [0,0,0]
@@ -24,6 +26,9 @@ class ThreadClass(QThread):
     status = pyqtSignal(str)
     
     def run(self):
+        global _isAuto_run
+        _isAuto_run = True
+        
         cap = cv2.VideoCapture(0)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH,1024)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT,576)
@@ -79,9 +84,8 @@ class ThreadClass(QThread):
     def stop(self):
         self.loop = False
         
-        frame = cv2.imread('assets/background2.png')
-        frame = cv2.resize(frame, (630,420))
-        self.ImageUpdate.emit(frame)
+        global _isAuto_run
+        _isAuto_run = False
         self.quit()
 
 class boardInfoClass(QThread):
@@ -229,7 +233,7 @@ class MainWindow(QMainWindow):
         if self.cb_manual.isChecked():
             self.show_manual_button()
             self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Manual Mode Active!")
-            self.cam_view.setPixmap(QPixmap('assets/background2.png'))
+            
         else:
             self.hide_manual_button()
             self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Manual Mode Deactive!")
@@ -437,13 +441,18 @@ class MainWindow(QMainWindow):
             rx = round((0.4296*objpos[0])-107.2,2)
             ry = round((-0.4588*objpos[1])+92.5,2)
             
-        self.ob_x.setText(str(rx))
-        self.ob_y.setText(str(ry))
-        self.ob_deg.setText(str(objpos[2]))
-        
-        
-    def getObj_pos(self):
-        pass
+        global _isAuto_run
+        if _isAuto_run == True:
+            self.ob_x.setText(str(rx))
+            self.ob_y.setText(str(ry))
+            self.ob_deg.setText(str(objpos[2]))
+        elif _isAuto_run == False:
+            self.cam_view.setPixmap(QPixmap('assets/background2.png'))
+            self.ob_x.setText("0")
+            self.ob_y.setText("0")
+            self.ob_deg.setText("0.0")
+            objpos = [0,0,0]
+            
     
 if __name__ == "__main__":
     app = QApplication([])
