@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1273</width>
+    <width>1278</width>
     <height>684</height>
    </rect>
   </property>
@@ -42,10 +42,10 @@
    <widget class="QLabel" name="cam_view">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>60</x>
       <y>70</y>
-      <width>730</width>
-      <height>400</height>
+      <width>630</width>
+      <height>420</height>
      </rect>
     </property>
     <property name="font">
@@ -70,7 +70,7 @@ background-color: rgb(170, 170, 127);
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>../assets/background.png</pixmap>
+     <pixmap>../assets/background2.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
@@ -82,7 +82,7 @@ background-color: rgb(170, 170, 127);
    <widget class="Line" name="line_2">
     <property name="geometry">
      <rect>
-      <x>770</x>
+      <x>730</x>
       <y>70</y>
       <width>20</width>
       <height>551</height>
@@ -402,10 +402,10 @@ background-color: rgb(200, 200, 200);</string>
    <widget class="QWidget" name="verticalLayoutWidget_8">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>490</y>
-      <width>731</width>
-      <height>131</height>
+      <x>40</x>
+      <y>510</y>
+      <width>671</width>
+      <height>111</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -450,9 +450,9 @@ background-color: rgb(238, 238, 236);</string>
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>800</x>
+      <x>770</x>
       <y>100</y>
-      <width>451</width>
+      <width>491</width>
       <height>381</height>
      </rect>
     </property>
@@ -466,7 +466,7 @@ background-color: rgb(200, 200, 200);</string>
     <widget class="QPushButton" name="pb_zplus">
      <property name="geometry">
       <rect>
-       <x>300</x>
+       <x>330</x>
        <y>60</y>
        <width>141</width>
        <height>91</height>
@@ -483,7 +483,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QPushButton" name="pb_xmin">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>170</y>
        <width>141</width>
        <height>91</height>
@@ -500,7 +500,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QPushButton" name="pb_yawmin">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>280</y>
        <width>141</width>
        <height>91</height>
@@ -517,7 +517,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QPushButton" name="pb_grip">
      <property name="geometry">
       <rect>
-       <x>160</x>
+       <x>180</x>
        <y>170</y>
        <width>131</width>
        <height>91</height>
@@ -537,7 +537,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QPushButton" name="pb_ymin">
      <property name="geometry">
       <rect>
-       <x>160</x>
+       <x>180</x>
        <y>280</y>
        <width>131</width>
        <height>91</height>
@@ -566,7 +566,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QPushButton" name="pb_yawplus">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>60</y>
        <width>141</width>
        <height>91</height>
@@ -583,7 +583,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QPushButton" name="pb_xplus">
      <property name="geometry">
       <rect>
-       <x>300</x>
+       <x>330</x>
        <y>170</y>
        <width>141</width>
        <height>91</height>
@@ -600,7 +600,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QPushButton" name="pb_yplus">
      <property name="geometry">
       <rect>
-       <x>160</x>
+       <x>180</x>
        <y>60</y>
        <width>131</width>
        <height>91</height>
@@ -617,11 +617,23 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QSlider" name="slider_jog">
      <property name="geometry">
       <rect>
-       <x>350</x>
+       <x>490</x>
        <y>30</y>
        <width>91</width>
-       <height>20</height>
+       <height>19</height>
       </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="baseSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
      </property>
      <property name="minimum">
       <number>0</number>
@@ -635,11 +647,14 @@ background-color: rgb(211, 215, 207);</string>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="tickPosition">
+      <enum>QSlider::NoTicks</enum>
+     </property>
     </widget>
     <widget class="QLabel" name="lbl_jog">
      <property name="geometry">
       <rect>
-       <x>390</x>
+       <x>530</x>
        <y>10</y>
        <width>51</width>
        <height>21</height>
@@ -655,7 +670,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QPushButton" name="pb_zmin">
      <property name="geometry">
       <rect>
-       <x>300</x>
+       <x>330</x>
        <y>280</y>
        <width>141</width>
        <height>91</height>
@@ -682,7 +697,7 @@ background-color: rgb(211, 215, 207);</string>
    <widget class="QWidget" name="horizontalLayoutWidget_3">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>560</x>
       <y>20</y>
       <width>181</width>
       <height>41</height>
@@ -707,9 +722,9 @@ background-color: rgb(211, 215, 207);</string>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>800</x>
+      <x>770</x>
       <y>500</y>
-      <width>451</width>
+      <width>491</width>
       <height>121</height>
      </rect>
     </property>
@@ -723,7 +738,7 @@ background-color: rgb(200, 200, 200);</string>
     <widget class="QPushButton" name="pb_grab">
      <property name="geometry">
       <rect>
-       <x>240</x>
+       <x>280</x>
        <y>40</y>
        <width>201</width>
        <height>71</height>
@@ -974,7 +989,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QLabel" name="stat_obj">
      <property name="geometry">
       <rect>
-       <x>380</x>
+       <x>420</x>
        <y>10</y>
        <width>61</width>
        <height>16</height>
@@ -1053,7 +1068,7 @@ background-color: rgb(211, 215, 207);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1273</width>
+     <width>1278</width>
      <height>22</height>
     </rect>
    </property>

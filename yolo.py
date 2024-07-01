@@ -32,6 +32,7 @@ while run_prog:
     ret, frame = cap.read()  
   
     if ret:
+        frame = frame[0:576, 150:865]
         frame = cv2.resize(frame, (0,0), fx=0.7,fy=0.7)
         results = model.predict(frame, imgsz=320, conf=0.3, device='0')
         result = results[0]
@@ -58,6 +59,7 @@ while run_prog:
                 val = cords[4]
 
                 r = round(math.degrees(val),2)
+                r = abs(r)
                 rect = ((x, y), (w, h), r)
                 box = cv2.boxPoints(rect) 
                 box = np.int0(box)
@@ -88,12 +90,15 @@ while run_prog:
             rx = x
             ry = y
         else:
-            rx = round((0.4325*x)-155,2)
-            ry = round((-0.4464*y)+90,2)
-            
+            rx = round((0.4296*x)-107.2,2)
+            ry = round((-0.4588*y)+92.5,2)
         
-        rxy_text = f"Coor Frame: {rx},{ry}"
+        rxy_text = f"Coor Real: {rx},{ry}"
         cv2.putText(frame, rxy_text, (10, 130), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1)        
+        
+        r_text = f"Orient: {r}"
+        cv2.putText(frame, r_text, (10, 160), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1)        
+
         
         cv2.imshow("Camera FPS", frame)
         

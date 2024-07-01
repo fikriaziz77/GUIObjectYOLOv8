@@ -33,13 +33,14 @@ class ThreadClass(QThread):
             ret, fr = cap.read()  
   
             if ret:
+                fr = fr[0:576, 150:865]
                 fr = cv2.resize(fr, (0,0), fx=0.7,fy=0.7)
                 results = model.predict(fr, imgsz=320, conf=0.3, device='0')
                 result = results[0]
                 box = result.obb
                   
-                frame = cv2.imread('assets/background.png')
-                frame = cv2.resize(frame, (730,400))
+                frame = cv2.imread('assets/background2.png')
+                frame = cv2.resize(frame, (630,420))
                     
                 if result:    
                     cords = box.xywhr[0].tolist()
@@ -47,15 +48,16 @@ class ThreadClass(QThread):
                     y = round(cords[1])
                     val = cords[4]
                     r = round(math.degrees(val),2)
+                    r = abs(r)
                     
-                    if r > 90:
-                        r = r-90
+                    if r > 180:
+                        r = r-180
                         
                     status = "background-color: rgb(0,255,0)"
                     
-                    guix = round(1.0184*x)
-                    guiy = round(0.9921*y)
-                    rect = ((guix, guiy), (20, 20), r)
+                    guix = round(1.2587*x)
+                    guiy = round(1.0417*y)
+                    rect = ((guix, guiy), (110, 110), r)
                     boxx = cv2.boxPoints(rect) 
                     boxx = np.int0(boxx)
                     cv2.drawContours(frame,[boxx],0,(0,0,255),2)
@@ -77,8 +79,8 @@ class ThreadClass(QThread):
     def stop(self):
         self.loop = False
         
-        frame = cv2.imread('assets/background.png')
-        frame = cv2.resize(frame, (730,400))
+        frame = cv2.imread('assets/background2.png')
+        frame = cv2.resize(frame, (630,420))
         self.ImageUpdate.emit(frame)
         self.quit()
 
@@ -221,11 +223,13 @@ class MainWindow(QMainWindow):
         #about menu
         self.actionAbout.triggered.connect(self.MenuAbout)
         self.win_about = Window_About()
+
         
     def manualdrive(self):
         if self.cb_manual.isChecked():
             self.show_manual_button()
             self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Manual Mode Active!")
+            self.cam_view.setPixmap(QPixmap('assets/background2.png'))
         else:
             self.hide_manual_button()
             self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Manual Mode Deactive!")
@@ -320,15 +324,14 @@ class MainWindow(QMainWindow):
     def sendDataPosition(self):
         global objpos
         
-        rx = round((0.4325*objpos[0])-155,2)
-        ry = round((-0.4464*objpos[1])+90,2)
+        rx = round((0.4296*objpos[0])-107.2,2)
+        ry = round((-0.4588*objpos[1])+92.5,2)
         rz = -200
+        rw = round(objpos[2],2)
         
-        data = f"1,{rx},{ry},{rz}" #address,x,y,z,r
+        data = f"1,{rx},{ry},{rz},{rw}" #address,x,y,z,r
         self.ser.write(data.encode('utf-8'))
-        baca = self.ser.readline().decode('utf-8')
-        print(baca)
-        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Collecting Object at X={rx} and Y={ry}")
+        self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Collecting Object at X={rx}; Y={ry}; YAW={rw} !")
         
         self.pb_grab.setEnabled(False)
         self.stat_obj.setEnabled(False)
@@ -431,8 +434,8 @@ class MainWindow(QMainWindow):
             rx = objpos[0]
             ry = objpos[1]
         else:
-            rx = round((0.4325*objpos[0])-155,2)
-            ry = round((-0.4464*objpos[1])+90,2)
+            rx = round((0.4296*objpos[0])-107.2,2)
+            ry = round((-0.4588*objpos[1])+92.5,2)
             
         self.ob_x.setText(str(rx))
         self.ob_y.setText(str(ry))
