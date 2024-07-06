@@ -336,10 +336,7 @@ class MainWindow(QMainWindow):
         data = f"1,{rx},{ry},{rz},{rw}" #address,x,y,z,r
         self.ser.write(data.encode('utf-8'))
         self.msgbox.append(f"{self.DateTime.toString('hh:mm:ss')}: Collecting Object at X={rx}; Y={ry}; YAW={rw} !")
-        
-        self.pb_grab.setEnabled(False)
-        self.stat_obj.setEnabled(False)
-        self.Opencv.stop()
+
     
     def SerialCommTest(self):
         prt = self.win_showset.comm_portlist.currentText()

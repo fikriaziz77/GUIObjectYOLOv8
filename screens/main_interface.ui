@@ -617,7 +617,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QSlider" name="slider_jog">
      <property name="geometry">
       <rect>
-       <x>490</x>
+       <x>380</x>
        <y>30</y>
        <width>91</width>
        <height>19</height>
@@ -654,7 +654,7 @@ background-color: rgb(211, 215, 207);</string>
     <widget class="QLabel" name="lbl_jog">
      <property name="geometry">
       <rect>
-       <x>530</x>
+       <x>420</x>
        <y>10</y>
        <width>51</width>
        <height>21</height>
