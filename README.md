@@ -4,7 +4,7 @@
 Repository ini berisi semua kode, data, dan dokumentasi yang diperlukan untuk proyek tugas akhir saya. Proyek ini adalah bagian dari syarat untuk memperoleh gelar Sarjana Terapan Teknologi (S.Tr.T) di Politeknik Manufaktur Bandung pada jurusan Teknik Otomasi Manufaktur dan Mekatronika.
 
 <p align="center">
-  <img src="https://github.com/fikriaziz77/GUIObjectYOLOv8/blob/master/sample/machine/machine1.jpeg?raw=true" height="350" title="Foto Mesin">
+  <img src="https://github.com/fikriaziz77/GUIObjectYOLOv8/blob/master/sample/machine/WhatsApp%20Image%202024-07-02%20at%2010.40.24%20AM.jpeg?raw=true" height="350" title="Foto Mesin">
   <img src="https://github.com/fikriaziz77/GUIObjectYOLOv8/blob/master/sample/paper/judul.png?raw=true" height="350" title="Judul">  
 </p>
 
